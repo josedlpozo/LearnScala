@@ -14,12 +14,12 @@ bin/
 libexec/
 lib_managed/
 src_managed/
-project/boot/
-project/plugins/project/
+*/boot/
+*/plugins/project/
 logs/
-project/*-shim.sbt
-project/project/
-project/target/
+*/*-shim.sbt
+*/project/
+*/target/
 target/
 .scala_dependencies
 .worksheet
