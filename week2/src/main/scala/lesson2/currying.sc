@@ -27,7 +27,7 @@ object currying {
 
   product(x => x * x)(1, 2)
 
-  def factorial(n: Int) : Int = product(x => x)(n - 1, n)
+  def factorial(n: Int) : Int = product(x => x)(1, n)
 
   factorial(4)
 
@@ -35,4 +35,13 @@ object currying {
     else combine(f(a), mapReduce(f, combine, zero)(a + 1, b))
 
   mapReduce(x => x, (x, y) => x + y, 0)(1, 2)
+
+
+  def product2(f: Int => Int)(a: Int, b: Int) : Int = mapReduce(f, (x, y) => x * y, 1)(a, b)
+
+  product2(x => x * x)(1, 2)
+
+  def factorial2(n: Int) : Int = product2(x => x)(1, n)
+
+  factorial(4)
 }
