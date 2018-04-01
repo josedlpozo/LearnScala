@@ -7,8 +7,8 @@ object functions {
     // Secondary constructor
     def this(x: Int) = this(x, 1)
 
-    val numer = x / gcd(x, y)
-    val denom = y / gcd(x, y)
+    val numer = x
+    val denom = y 
 
     def add(rational: Rational): Rational = new Rational(numer * rational.denom + rational.numer * denom,
       denom * rational.denom)
@@ -21,7 +21,7 @@ object functions {
 
     def max(rational: Rational) = if (this.less(rational)) rational else this
 
-    override def toString: String = numer + "/" + denom
+    override def toString: String = numer / gcd(x, y) + "/" + denom / gcd(x, y)
   }
 
   val x = new Rational(1, 3)
