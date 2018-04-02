@@ -1,4 +1,6 @@
-object hierarchies {
+package lesson1
+
+object Hierarchies {
 
   class NonEmpty(elem: Int, left: IntSet, right: IntSet) extends IntSet {
 
@@ -12,6 +14,9 @@ object hierarchies {
       else if (x > elem) right contains x
       else true
 
+    override def union(other: IntSet): IntSet =
+      ((left union right) union other) incl elem
+
     override def toString: String = "{" + left + elem + right + "}"
   }
 
@@ -20,19 +25,17 @@ object hierarchies {
 
     override def contains(x: Int) = false
 
+    override def union(other: IntSet): IntSet = other
+
     override def toString: String = "."
-  }
-
-  new IntSet {
-    override def contains(x: Int): Boolean = false
-
-    override def incl(x: Int): IntSet = this
   }
 
   abstract class IntSet {
     def incl(x: Int): IntSet
 
     def contains(x: Int): Boolean
+
+    def union(other: IntSet): IntSet
   }
 
 
