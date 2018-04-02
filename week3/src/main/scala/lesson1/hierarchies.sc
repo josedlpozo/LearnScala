@@ -15,8 +15,8 @@ object hierarchies {
     override def toString: String = "{" + left + elem + right + "}"
   }
 
-  class Empty extends IntSet {
-    override def incl(x: Int) = new NonEmpty(x, new Empty, new Empty)
+  object Empty extends IntSet {
+    override def incl(x: Int) = new NonEmpty(x, Empty, Empty)
 
     override def contains(x: Int) = false
 
@@ -36,7 +36,7 @@ object hierarchies {
   }
 
 
-  val t1 = new NonEmpty(3, new Empty, new Empty)
+  val t1 = new NonEmpty(3, Empty, Empty)
   val t2 = t1 incl 4
 
 }
