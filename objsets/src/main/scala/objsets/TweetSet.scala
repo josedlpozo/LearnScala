@@ -2,6 +2,8 @@ package objsets
 
 import TweetReader._
 
+import scala.annotation.tailrec
+
 /**
  * A class to represent tweets.
  */
@@ -54,7 +56,7 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-    def union(that: TweetSet): TweetSet
+    def union(that: TweetSet): TweetSet = filterAcc(_ => true, that)
   
   /**
    * Returns the tweet from this set which has the greatest retweet count.
@@ -104,6 +106,8 @@ abstract class TweetSet {
    * This method takes a function and applies it to every element in the set.
    */
   def foreach(f: Tweet => Unit): Unit
+
+  def isEmpty : Boolean
 }
 
 class Empty extends TweetSet {
@@ -122,8 +126,6 @@ class Empty extends TweetSet {
   def remove(tweet: Tweet): TweetSet = this
 
   def foreach(f: Tweet => Unit): Unit = ()
-
-  override def union(that: TweetSet): TweetSet = that
 
   /**
     * Returns the tweet from this set which has the greatest retweet count.
@@ -146,6 +148,8 @@ class Empty extends TweetSet {
     * and be implemented in the subclasses?
     */
   override def descendingByRetweet: TweetList = Nil
+
+  override def isEmpty: Boolean = true
 }
 
 class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
@@ -153,8 +157,8 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   def filter(p: Tweet => Boolean): TweetSet = filterAcc(p, new Empty)
 
   def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet =
-    if (acc contains elem) acc
-    else remove(elem).filterAcc(p, if (p(elem)) acc incl elem else acc)
+    if (p(elem)) left.filterAcc(p, right.filterAcc(p, acc.incl(elem)))
+    else left.filterAcc(p, right.filterAcc(p, acc))
 
   /**
    * The following methods are already implemented
@@ -182,23 +186,23 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
     right.foreach(f)
   }
 
-  override def union(that: TweetSet): TweetSet =
-    if (this == that) this
-    else if (that contains elem) remove(elem) union that
-    else union(that incl elem)
-
   override def mostRetweeted: Tweet = {
-    var x = 0
-    var tweet : Tweet = null
-    foreach(y => if (y.retweets > x) {
-      x = y.retweets
-      tweet = y
-    })
+    def maxRetweets(tweet1: Tweet, tweet2: Tweet): Tweet =
+      if (tweet1.retweets > tweet2.retweets) tweet1
+      else tweet2
 
-    tweet
+    if (left.isEmpty && right.isEmpty) elem
+    else if (left.isEmpty) maxRetweets(right.mostRetweeted, elem)
+    else if (right.isEmpty) maxRetweets(left.mostRetweeted, elem)
+    else maxRetweets(maxRetweets(left.mostRetweeted, elem), right.mostRetweeted)
   }
 
-  override def descendingByRetweet: TweetList = new Cons(mostRetweeted, remove(mostRetweeted).descendingByRetweet)
+  override def descendingByRetweet: TweetList = {
+    val tweet = mostRetweeted
+    new Cons(mostRetweeted, remove(tweet).descendingByRetweet)
+  }
+
+  override def isEmpty: Boolean = false
 }
 
 trait TweetList {
