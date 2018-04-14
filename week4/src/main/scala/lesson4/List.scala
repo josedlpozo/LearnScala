@@ -22,11 +22,11 @@ object Nil extends List[Nothing] {
 
 object List {
 
-  def apply[T]() = Nil[T]
+  def apply[T]() = Nil
 
-  def apply[T](x1: T) = new Cons[T](x1, Nil[T])
+  def apply[T](x1: T) = new Cons[T](x1, Nil)
 
-  def apply[T](x1: T, x2: T) = new Cons[T](x1, new Cons[T](x2, Nil[T]))
+  def apply[T](x1: T, x2: T) = new Cons[T](x1, new Cons[T](x2, Nil))
 
 }
 
