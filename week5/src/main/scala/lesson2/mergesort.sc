@@ -16,7 +16,7 @@ object mergesort {
       merge(msort(fst), msort(snd))
     }
   }
-  
+
   val nums = List(2, -4, 5, 7, 1)
   msort(nums)
 }
